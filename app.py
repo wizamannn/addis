@@ -811,48 +811,48 @@ input, textarea {{
 .stNumberInput input,
 .stTextArea textarea,
 .stDateInput input,
-.stSelectbox div[data-baseweb="select"] > div {
+.stSelectbox div[data-baseweb="select"] > div {{
     background: rgba(255,255,255,.96) !important;
     color: #111111 !important;
     border: 1px solid rgba(255,255,255,.25) !important;
     border-radius: 14px !important;
-}
+}}
 
 .stTextInput input:focus,
 .stNumberInput input:focus,
 .stTextArea textarea:focus,
-.stDateInput input:focus {
+.stDateInput input:focus {{
     background: #ffffff !important;
     color: #000000 !important;
     border: 2px solid #ff2020 !important;
     box-shadow: 0 0 18px rgba(255,32,32,.45) !important;
-}
+}}
 
 .stTextInput input::placeholder,
-.stTextArea textarea::placeholder {
+.stTextArea textarea::placeholder {{
     color: #666666 !important;
     opacity: 1 !important;
-}
+}}
 
 /* Selectbox text visibility */
 .stSelectbox div[data-baseweb="select"] span,
-.stSelectbox div[data-baseweb="select"] input {
+.stSelectbox div[data-baseweb="select"] input {{
     color: #111111 !important;
-}
+}}
 
 /* Dropdown menu readability */
-div[data-baseweb="popover"] {
+div[data-baseweb="popover"] {{
     color: #111111 !important;
-}
+}}
 
-div[data-baseweb="popover"] * {
+div[data-baseweb="popover"] * {{
     color: #111111 !important;
-}
+}}
 
 /* Date picker readability */
-div[data-baseweb="calendar"] * {
+div[data-baseweb="calendar"] * {{
     color: #111111 !important;
-}
+}}
 
 [data-testid="metric-container"] {{
     background: rgba(16,16,16,.92);
