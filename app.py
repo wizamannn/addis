@@ -5,6 +5,8 @@ import pandas as pd
 import os
 import json
 import hashlib
+import smtplib
+from email.message import EmailMessage
 from datetime import datetime
 from uuid import uuid4
 
@@ -29,6 +31,13 @@ ADMIN_HASH = hashlib.sha256("admin123".encode()).hexdigest()
 DEALER_ADDRESS = "904 N La Brea Ave, Inglewood, CA"
 DEALER_PHONE = "4246720018"
 GOOGLE_MAPS_URL = "https://www.google.com/maps/search/?api=1&query=904%20N%20La%20Brea%20Ave%20Inglewood%20CA"
+
+# =====================================================
+# GMAIL EMAIL SETTINGS
+# =====================================================
+GMAIL_ADDRESS = "autosalesaddis@gmail.com"
+GMAIL_APP_PASSWORD = "dskwwqmhvvscpcjr"
+ADMIN_EMAIL = "autosalesaddis@gmail.com"
 
 # =====================================================
 # DATABASE
@@ -92,6 +101,25 @@ def send_sms_placeholder(phone, message):
     (phone, message, status, created_at)
     VALUES (?,?,?,?)
     """, (phone, message, "Logged - Twilio not connected", str(datetime.now())), commit=True)
+
+def send_email(to_email, subject, body):
+    if not to_email:
+        return
+
+    try:
+        msg = EmailMessage()
+        msg["From"] = GMAIL_ADDRESS
+        msg["To"] = to_email
+        msg["Subject"] = subject
+        msg.set_content(body)
+
+        with smtplib.SMTP("smtp.gmail.com", 587) as server:
+            server.starttls()
+            server.login(GMAIL_ADDRESS, GMAIL_APP_PASSWORD)
+            server.send_message(msg)
+
+    except Exception as e:
+        create_notification("Email Error", str(e))
 
 # =====================================================
 # TABLES
@@ -1076,6 +1104,52 @@ if page == "Home":
 
                 send_sms_placeholder(q_phone, "Thank you for contacting Addis Auto Sales. We received your request.")
                 create_notification("New Questionnaire", f"{q_name} submitted a buyer questionnaire.")
+
+                send_email(
+                    q_email,
+                    "Addis Auto Sales Inquiry Received",
+                    f"""
+Hi {q_name},
+
+We received your vehicle inquiry questionnaire.
+
+Vehicle Interest:
+{desired_year} {desired_make} {desired_model}
+
+Budget:
+{budget}
+
+Payment Preference:
+{payment_preference}
+
+A member of Addis Auto Sales will contact you soon.
+
+904 N La Brea Ave, Inglewood, CA
+424-672-0018
+"""
+                )
+
+                send_email(
+                    ADMIN_EMAIL,
+                    "New Buyer Questionnaire",
+                    f"""
+New customer inquiry submitted.
+
+Customer: {q_name}
+Phone: {q_phone}
+Email: {q_email}
+
+Vehicle Interest:
+{desired_year} {desired_make} {desired_model}
+
+Budget:
+{budget}
+
+Payment Preference:
+{payment_preference}
+"""
+                )
+
                 notify_admin(
                     "New Buyer Questionnaire",
                     q_name,
@@ -1301,6 +1375,45 @@ elif page == "Finance":
 
                 send_sms_placeholder(phone, f"Addis Auto Sales received your finance application for {vehicle_name}.")
                 create_notification("New Finance Application", f"{full_name} applied for {vehicle_name}.")
+
+                send_email(
+                    email,
+                    "Addis Auto Sales Finance Application Received",
+                    f"""
+Hi {full_name},
+
+Your finance application was received successfully.
+
+Vehicle:
+{vehicle_name}
+
+Preferred Appointment:
+{appointment_date} at {appointment_time}
+
+Addis Auto Sales will contact you shortly.
+
+904 N La Brea Ave, Inglewood, CA
+424-672-0018
+"""
+                )
+
+                send_email(
+                    ADMIN_EMAIL,
+                    "New Finance Application Alert",
+                    f"""
+New finance application submitted.
+
+Customer: {full_name}
+Phone: {phone}
+Email: {email}
+Vehicle: {vehicle_name}
+Income: ${monthly_income:,.0f}
+Credit: {credit_range}
+Down Payment: ${down_payment:,.0f}
+Loan Term: {loan_term}
+"""
+                )
+
                 notify_admin(
                     "New Finance Application",
                     full_name,
@@ -1364,6 +1477,45 @@ elif page == "Appointment":
 
                 send_sms_placeholder(phone, f"Addis Auto Sales received your appointment request for {vehicle_name}.")
                 create_notification("New Appointment", f"{name} booked appointment for {vehicle_name}.")
+
+                send_email(
+                    email,
+                    "Addis Auto Sales Appointment Confirmation",
+                    f"""
+Hi {name},
+
+Your appointment has been received successfully.
+
+Vehicle: {vehicle_name}
+Date: {date}
+Time: {time}
+
+Location:
+904 N La Brea Ave, Inglewood, CA
+
+Phone:
+424-672-0018
+
+Thank you for choosing Addis Auto Sales.
+"""
+                )
+
+                send_email(
+                    ADMIN_EMAIL,
+                    "New Appointment Alert",
+                    f"""
+New appointment submitted.
+
+Customer: {name}
+Phone: {phone}
+Email: {email}
+Vehicle: {vehicle_name}
+Date: {date}
+Time: {time}
+Reason: {reason}
+"""
+                )
+
                 notify_admin(
                     "New Appointment Inquiry",
                     name,
@@ -1416,6 +1568,44 @@ elif page == "Appointment":
                 f"{vy} {vmk} {vmd}",
                 f"Mileage: {mi:,} | Condition: {condition} | Estimate: ${estimate:,.0f}"
             )
+            
+            send_email(
+                te,
+                "Addis Auto Sales Trade-In Request Received",
+                f"""
+Hi {tn},
+
+We received your trade-in request.
+
+Vehicle:
+{vy} {vmk} {vmd}
+
+Estimated Value:
+Around ${estimate:,.0f}
+
+Addis Auto Sales will verify the vehicle in person.
+
+904 N La Brea Ave, Inglewood, CA
+424-672-0018
+"""
+            )
+
+            send_email(
+                ADMIN_EMAIL,
+                "New Trade-In Request",
+                f"""
+New trade-in request submitted.
+
+Customer: {tn}
+Phone: {tp}
+Email: {te}
+Vehicle: {vy} {vmk} {vmd}
+Mileage: {mi:,}
+Condition: {condition}
+Estimated Value: ${estimate:,.0f}
+"""
+            )
+
             st.success(f"Estimated trade-in range: around ${estimate:,.0f}. Dealer will verify in person.")
         st.markdown("</div>", unsafe_allow_html=True)
 
@@ -1611,6 +1801,20 @@ elif page == "Dealer Portal":
                         vehicle_label = f"{year} {make} {model}"
                         log_activity(st.session_state["selected_salesperson"], "Added Vehicle", f"{vehicle_label} | Status: {status} | Price: ${price:,.0f}")
                         create_notification("New Vehicle Added", vehicle_label)
+
+                        send_email(
+                            ADMIN_EMAIL,
+                            "Vehicle Posted Successfully",
+                            f"""
+A vehicle was posted successfully.
+
+Posted By: {st.session_state["selected_salesperson"]}
+Vehicle: {vehicle_label}
+Status: {status}
+Price: ${price:,.0f}
+"""
+                        )
+
                         notify_admin(
                             "Vehicle Posted",
                             st.session_state["selected_salesperson"],
