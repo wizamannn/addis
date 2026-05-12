@@ -1505,53 +1505,80 @@ elif page == "Appointment":
         phone = c2.text_input("Phone Number", placeholder="(555) 123-4567")
         email = c1.text_input("Email", placeholder="example@email.com")
         date = c2.date_input("Appointment Date", min_value=dt_date.today())
-        st.markdown("### Preferred Arrival Time")
+        st.markdown("""
+        <div class="appointment-card">
+            <h3>Choose Your Preferred Arrival Window</h3>
+            <p>
+                Select the date and time that works best for your visit. 
+                Same-day appointments automatically hide unavailable past times, so the schedule stays accurate and professional.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
 
-        time = st.selectbox(
-            "What time will you arrive?",
-            [
-                "09:00 AM",
-                "09:30 AM",
-                "10:00 AM",
-                "10:30 AM",
-                "11:00 AM",
-                "11:30 AM",
-                "12:00 PM",
-                "12:30 PM",
-                "01:00 PM",
-                "01:30 PM",
-                "02:00 PM",
-                "02:30 PM",
-                "03:00 PM",
-                "03:30 PM",
-                "04:00 PM",
-                "04:30 PM",
-                "05:00 PM",
-                "05:30 PM",
-                "06:00 PM"
-            ]
-        )
+        all_times = [
+            "09:00 AM",
+            "09:30 AM",
+            "10:00 AM",
+            "10:30 AM",
+            "11:00 AM",
+            "11:30 AM",
+            "12:00 PM",
+            "12:30 PM",
+            "01:00 PM",
+            "01:30 PM",
+            "02:00 PM",
+            "02:30 PM",
+            "03:00 PM",
+            "03:30 PM",
+            "04:00 PM",
+            "04:30 PM",
+            "05:00 PM",
+            "05:30 PM",
+            "06:00 PM"
+        ]
+
+        now = datetime.now()
+        today = dt_date.today()
+
+        if date == today:
+            available_times = []
+            for slot in all_times:
+                slot_time = datetime.strptime(slot, "%I:%M %p").time()
+                slot_datetime = datetime.combine(today, slot_time)
+
+                if slot_datetime > now:
+                    available_times.append(slot)
+
+            if not available_times:
+                st.warning("No appointment times are available for the selected date. Please choose another date.")
+                time = "No available time today"
+            else:
+                time = st.selectbox("Preferred arrival time", available_times)
+        else:
+            time = st.selectbox("Preferred arrival time", all_times)
 
         appointment_submitted_at = datetime.now().strftime("%B %d, %Y at %I:%M %p")
 
-        st.info(
-            f"""
-Your appointment request will be submitted instantly.
+        if time != "No available time today":
+            st.markdown(f"""
+            <div class="appointment-summary">
+                <div class="appointment-summary-title">Appointment Preview</div>
+                <div class="appointment-summary-main">{date} at {time}</div>
+                <div class="appointment-summary-sub">
+                    Addis Auto Sales will review your request and contact you to confirm your visit.
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
 
-Selected Arrival Time:
-{time}
-
-Request Selected Arrival Time:
-{appointment_submitted_at}
-"""
-        )
         reason = st.text_area("Reason for visit", value="Vehicle Appointment")
         submit = st.form_submit_button("Book Appointment")
 
         if submit:
             vehicle_name = selected["name"] if selected else "General Appointment"
             vehicle_price = f"${selected['price']:,.0f}" if selected else "Not Selected"
-            if not name or not phone:
+            if time == "No available time today":
+                st.error("Please choose another date because there are no appointment times available for the selected date.")
+            elif not name or not phone:
                 st.error("Please enter your name and phone number.")
             else:
                 query_db("INSERT INTO appointments (name, phone, email, date, time, reason, created_at) VALUES (?,?,?,?,?,?,?)", (name, phone, email, str(date), time, f"{reason} | Vehicle: {vehicle_name}", str(datetime.now())), commit=True)
