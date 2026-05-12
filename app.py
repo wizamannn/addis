@@ -1,4 +1,5 @@
 
+
 import streamlit as st
 import sqlite3
 import pandas as pd
@@ -1458,7 +1459,11 @@ elif page == "Appointment":
         phone = c2.text_input("Phone Number", placeholder="(555) 123-4567")
         email = c1.text_input("Email", placeholder="example@email.com")
         date = c2.date_input("Appointment Date")
-        time = st.selectbox("Appointment Time", ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"])
+        appointment_submitted_at = datetime.now().strftime("%B %d, %Y at %I:%M %p")
+        time = "Submitted in real time"
+        appointment_end_time = appointment_submitted_at
+
+        st.info(f"Appointment request time will be recorded automatically: {appointment_submitted_at}")
         reason = st.text_area("Reason for visit", value="Vehicle Appointment")
         submit = st.form_submit_button("Book Appointment")
 
@@ -1494,7 +1499,7 @@ Appointment Details
 -------------------
 Vehicle: {vehicle_name}
 Date: {date}
-Time: {time}
+Submitted: {appointment_end_time}
 Reason for Visit: {reason}
 
 Dealership Location
@@ -1549,7 +1554,7 @@ Appointment Details
 -------------------
 Vehicle: {vehicle_name}
 Date: {date}
-Time: {time}
+Submitted: {appointment_end_time}
 Reason: {reason}
 
 Recommended Follow-Up
@@ -1568,21 +1573,50 @@ Addis Auto Sales
                     name,
                     phone,
                     vehicle_name,
-                    f"Date: {date} | Time: {time} | Reason: {reason}"
+                    f"Date: {date} | Submitted: {appointment_end_time} | Reason: {reason}"
                 )
 
                 st.session_state["confirmation_data"] = {
                     "title": "Appointment Request Received",
                     "subtitle": "Thank you for choosing Addis Auto Sales.",
-                    "message": "Your appointment request has been received. Our team will prepare your vehicle information and may contact you to confirm your visit. Location: 904 N La Brea Ave, Inglewood, CA. Phone: 424-672-0018.",
+                    "message": "Your appointment request has been received. Our team will prepare your vehicle information and may contact you to confirm your visit. Your appointment request was recorded in real time, and our team will contact you to confirm the best available appointment slot. Location: 904 N La Brea Ave, Inglewood, CA. Phone: 424-672-0018.",
                     "name": name,
                     "vehicle": vehicle_name,
                     "date": str(date),
-                    "time": time,
+                    "time": appointment_end_time,
                     "ask_appointment": False
                 }
                 st.session_state["force_page"] = "Confirmation"
                 st.rerun()
+
+
+    st.markdown("""
+    <div style="
+        margin:60px 0 30px 0;
+        border-top:1px solid rgba(255,255,255,.12);
+        padding-top:35px;
+    ">
+        <h2 style="
+            color:white;
+            font-size:2rem;
+            font-weight:900;
+            text-align:center;
+        ">
+            Vehicle Trade-In Center
+        </h2>
+
+        <p style="
+            text-align:center;
+            color:#cfcfcf;
+            max-width:760px;
+            margin:auto;
+            margin-top:10px;
+            line-height:1.7;
+        ">
+            Receive an estimated value for your current vehicle and let Addis Auto Sales help maximize your trade-in value.
+        </p>
+    </div>
+    """, unsafe_allow_html=True)
 
     st.markdown('<div class="section-title">Trade-In Estimator</div>', unsafe_allow_html=True)
     with st.form("trade_in_form"):
@@ -2007,4 +2041,5 @@ Price: ${price:,.0f}
                 st.dataframe(query_db("SELECT * FROM notifications ORDER BY id DESC"), use_container_width=True)
                 st.markdown("### SMS Logs")
                 st.dataframe(query_db("SELECT * FROM sms_logs ORDER BY id DESC"), use_container_width=True)
+
 
