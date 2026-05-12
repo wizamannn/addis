@@ -7,7 +7,7 @@ import json
 import hashlib
 import smtplib
 from email.message import EmailMessage
-from datetime import datetime, date as dt_date
+from datetime import datetime, date as dt_date, timedelta
 from uuid import uuid4
 
 # =====================================================
@@ -1504,7 +1504,18 @@ elif page == "Appointment":
         name = c1.text_input("Full Name", placeholder="Enter your full name")
         phone = c2.text_input("Phone Number", placeholder="(555) 123-4567")
         email = c1.text_input("Email", placeholder="example@email.com")
-        date = c2.date_input("Appointment Date", min_value=dt_date.today())
+        today = dt_date.today()
+        now_for_default = datetime.now()
+        last_slot_today = datetime.combine(today, datetime.strptime("06:00 PM", "%I:%M %p").time())
+
+        # If today is already closed, start customers on tomorrow automatically.
+        default_appointment_date = today if now_for_default < last_slot_today else today + timedelta(days=1)
+
+        date = c2.date_input(
+            "Appointment Date",
+            value=default_appointment_date,
+            min_value=today
+        )
         st.markdown("""
         <div class="appointment-card">
             <h3>Choose Your Preferred Arrival Window</h3>
@@ -1550,7 +1561,15 @@ elif page == "Appointment":
                     available_times.append(slot)
 
             if not available_times:
-                st.warning("No appointment times are available for the selected date. Please choose another date.")
+                st.markdown("""
+                <div class="appointment-summary">
+                    <div class="appointment-summary-title">Today Is Fully Booked</div>
+                    <div class="appointment-summary-main">Please choose another date</div>
+                    <div class="appointment-summary-sub">
+                        All remaining appointment windows for today have passed. Select tomorrow or another future date to continue.
+                    </div>
+                </div>
+                """, unsafe_allow_html=True)
                 time = "No available time today"
             else:
                 time = st.selectbox("Preferred arrival time", available_times)
@@ -1570,8 +1589,16 @@ elif page == "Appointment":
             </div>
             """, unsafe_allow_html=True)
 
-        reason = st.text_area("Reason for visit", value="Vehicle Appointment")
-        submit = st.form_submit_button("Book Appointment")
+        if time != "No available time today":
+            reason = st.text_area(
+                "Reason for visit",
+                value="Vehicle Appointment",
+                placeholder="Example: I want to test drive this vehicle and discuss purchase options."
+            )
+            submit = st.form_submit_button("Book Appointment")
+        else:
+            reason = "No available appointment time selected"
+            submit = False
 
         if submit:
             vehicle_name = selected["name"] if selected else "General Appointment"
