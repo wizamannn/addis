@@ -1658,9 +1658,11 @@ Addis Auto Sales
             margin:auto;
             margin-top:14px;
             line-height:1.9;
+            font-size:1.05rem;
+            font-weight:400;
         ">
-            Thinking about trading in your current vehicle? Addis Auto Sales makes the process simple, transparent, and professional. 
-            Submit your vehicle details to receive an estimated trade-in value, and our team will carefully review your information to help you maximize your offer. 
+            Thinking about trading in your current vehicle? Addis Auto Sales makes the process simple, transparent, and professional.
+            Submit your vehicle details to receive an estimated trade-in value, and our team will carefully review your information to help you maximize your offer.
             Whether you are upgrading, downsizing, or preparing for your next purchase, we are here to help make your transition smooth and stress-free.
         </p>
     </div>
