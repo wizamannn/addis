@@ -1504,7 +1504,7 @@ elif page == "Appointment":
         name = c1.text_input("Full Name", placeholder="Enter your full name")
         phone = c2.text_input("Phone Number", placeholder="(555) 123-4567")
         email = c1.text_input("Email", placeholder="example@email.com")
-        date = c2.date_input("Appointment Date")
+        date = c2.date_input("Appointment Date", min_value=dt_date.today())
         st.markdown("### Preferred Arrival Time")
 
         time = st.selectbox(
