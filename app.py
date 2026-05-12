@@ -1505,11 +1505,46 @@ elif page == "Appointment":
         phone = c2.text_input("Phone Number", placeholder="(555) 123-4567")
         email = c1.text_input("Email", placeholder="example@email.com")
         date = c2.date_input("Appointment Date")
-        appointment_submitted_at = datetime.now().strftime("%B %d, %Y at %I:%M %p")
-        time = "Submitted in real time"
-        appointment_end_time = appointment_submitted_at
+        st.markdown("### Preferred Arrival Time")
 
-        st.info(f"Appointment request time will be recorded automatically: {appointment_submitted_at}")
+        time = st.selectbox(
+            "What time will you arrive?",
+            [
+                "09:00 AM",
+                "09:30 AM",
+                "10:00 AM",
+                "10:30 AM",
+                "11:00 AM",
+                "11:30 AM",
+                "12:00 PM",
+                "12:30 PM",
+                "01:00 PM",
+                "01:30 PM",
+                "02:00 PM",
+                "02:30 PM",
+                "03:00 PM",
+                "03:30 PM",
+                "04:00 PM",
+                "04:30 PM",
+                "05:00 PM",
+                "05:30 PM",
+                "06:00 PM"
+            ]
+        )
+
+        appointment_submitted_at = datetime.now().strftime("%B %d, %Y at %I:%M %p")
+
+        st.info(
+            f"""
+Your appointment request will be submitted instantly.
+
+Selected Arrival Time:
+{time}
+
+Request Submitted:
+{appointment_submitted_at}
+"""
+        )
         reason = st.text_area("Reason for visit", value="Vehicle Appointment")
         submit = st.form_submit_button("Book Appointment")
 
@@ -1629,7 +1664,7 @@ Addis Auto Sales
                     "name": name,
                     "vehicle": vehicle_name,
                     "date": str(date),
-                    "time": appointment_end_time,
+                    "time": time,
                     "ask_appointment": False
                 }
                 st.session_state["force_page"] = "Confirmation"
