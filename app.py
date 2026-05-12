@@ -1,5 +1,4 @@
 
-
 import streamlit as st
 import sqlite3
 import pandas as pd
@@ -391,7 +390,7 @@ def show_premium_banner(title, subtitle, image_url):
         <p style="
             color:#e6e6e6;
             font-size:1.05rem;
-            max-width:760px;
+            max-width:820px;
             margin:auto;
             line-height:1.6;
         ">{subtitle}</p>
@@ -807,6 +806,53 @@ input, textarea {{
     color: white !important;
     border: 1px solid rgba(255,255,255,.12) !important;
 }}
+
+.stTextInput input,
+.stNumberInput input,
+.stTextArea textarea,
+.stDateInput input,
+.stSelectbox div[data-baseweb="select"] > div {
+    background: rgba(255,255,255,.96) !important;
+    color: #111111 !important;
+    border: 1px solid rgba(255,255,255,.25) !important;
+    border-radius: 14px !important;
+}
+
+.stTextInput input:focus,
+.stNumberInput input:focus,
+.stTextArea textarea:focus,
+.stDateInput input:focus {
+    background: #ffffff !important;
+    color: #000000 !important;
+    border: 2px solid #ff2020 !important;
+    box-shadow: 0 0 18px rgba(255,32,32,.45) !important;
+}
+
+.stTextInput input::placeholder,
+.stTextArea textarea::placeholder {
+    color: #666666 !important;
+    opacity: 1 !important;
+}
+
+/* Selectbox text visibility */
+.stSelectbox div[data-baseweb="select"] span,
+.stSelectbox div[data-baseweb="select"] input {
+    color: #111111 !important;
+}
+
+/* Dropdown menu readability */
+div[data-baseweb="popover"] {
+    color: #111111 !important;
+}
+
+div[data-baseweb="popover"] * {
+    color: #111111 !important;
+}
+
+/* Date picker readability */
+div[data-baseweb="calendar"] * {
+    color: #111111 !important;
+}
 
 [data-testid="metric-container"] {{
     background: rgba(16,16,16,.92);
@@ -1607,13 +1653,15 @@ Addis Auto Sales
 
         <p style="
             text-align:center;
-            color:#cfcfcf;
-            max-width:760px;
+            color:#e5e5e5;
+            max-width:820px;
             margin:auto;
-            margin-top:10px;
-            line-height:1.7;
+            margin-top:14px;
+            line-height:1.9;
         ">
-            Receive an estimated value for your current vehicle and let Addis Auto Sales help maximize your trade-in value.
+            Thinking about trading in your current vehicle? Addis Auto Sales makes the process simple, transparent, and professional. 
+            Submit your vehicle details to receive an estimated trade-in value, and our team will carefully review your information to help you maximize your offer. 
+            Whether you are upgrading, downsizing, or preparing for your next purchase, we are here to help make your transition smooth and stress-free.
         </p>
     </div>
     """, unsafe_allow_html=True)
@@ -2041,5 +2089,4 @@ Price: ${price:,.0f}
                 st.dataframe(query_db("SELECT * FROM notifications ORDER BY id DESC"), use_container_width=True)
                 st.markdown("### SMS Logs")
                 st.dataframe(query_db("SELECT * FROM sms_logs ORDER BY id DESC"), use_container_width=True)
-
 
