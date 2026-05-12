@@ -1636,37 +1636,18 @@ Addis Auto Sales
                 st.rerun()
 
 
-    st.markdown("""
-    <div style="
-        margin:60px 0 30px 0;
-        border-top:1px solid rgba(255,255,255,.12);
-        padding-top:35px;
-    ">
-        <h2 style="
-            color:white;
-            font-size:2rem;
-            font-weight:900;
-            text-align:center;
-        ">
-            Vehicle Trade-In Center
-        </h2>
-
-        <p style="
-            text-align:center;
-            color:#e5e5e5;
-            max-width:820px;
-            margin:auto;
-            margin-top:14px;
-            line-height:1.9;
-            font-size:1.05rem;
-            font-weight:400;
-        ">
-            Thinking about trading in your current vehicle? Addis Auto Sales makes the process simple, transparent, and professional.
-            Submit your vehicle details to receive an estimated trade-in value, and our team will carefully review your information to help you maximize your offer.
-            Whether you are upgrading, downsizing, or preparing for your next purchase, we are here to help make your transition smooth and stress-free.
-        </p>
-    </div>
-    """, unsafe_allow_html=True)
+        st.markdown("""
+<div style="margin:60px 0 30px 0; border-top:1px solid rgba(255,255,255,.12); padding-top:35px;">
+    <h2 style="color:white; font-size:2rem; font-weight:900; text-align:center;">
+        Vehicle Trade-In Center
+    </h2>
+    <p style="text-align:center; color:#e5e5e5; max-width:820px; margin:auto; margin-top:14px; line-height:1.9; font-size:1.05rem; font-weight:400;">
+        Thinking about trading in your current vehicle? Addis Auto Sales makes the process simple, transparent, and professional.
+        Submit your vehicle details to receive an estimated trade-in value, and our team will carefully review your information to help you maximize your offer.
+        Whether you are upgrading, downsizing, or preparing for your next purchase, we are here to help make your transition smooth and stress-free.
+    </p>
+</div>
+""", unsafe_allow_html=True)
 
     st.markdown('<div class="section-title">Trade-In Estimator</div>', unsafe_allow_html=True)
 
