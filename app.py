@@ -1480,39 +1480,86 @@ elif page == "Appointment":
 
                 send_email(
                     email,
-                    "Addis Auto Sales Appointment Confirmation",
+                    "Your Addis Auto Sales Appointment Confirmation",
                     f"""
-Hi {name},
+Dear {name},
 
-Your appointment has been received successfully.
+Welcome to Addis Auto Sales — we truly appreciate the opportunity to assist you.
 
+Thank you for scheduling your appointment with our dealership. Your request has been successfully received, and our team is already preparing for your visit to make your experience smooth, professional, and personalized.
+
+{name}, we understand that purchasing a vehicle is an important decision, and our goal is to help you feel comfortable, informed, and confident throughout the process. Whether you are visiting for a test drive, financing assistance, trade-in support, or to finalize your purchase, we are excited to help you find the right vehicle that fits your needs and budget.
+
+Appointment Details
+-------------------
 Vehicle: {vehicle_name}
 Date: {date}
 Time: {time}
+Reason for Visit: {reason}
 
-Location:
+Dealership Location
+-------------------
+Addis Auto Sales
+904 N La Brea Ave
+Inglewood, CA
+
+Phone: 424-672-0018
+
+About Addis Auto Sales
+----------------------
+Addis Auto Sales is a local Inglewood dealership focused on helping customers find quality vehicles with a simple, respectful, and professional buying experience. Whether you are visiting for a test drive, financing questions, trade-in support, or to complete your purchase, our team is here to help guide you through the process.
+
+Before You Arrive
+-----------------
+Please bring a valid driver's license.
+If you are interested in financing, please bring proof of income and any documents that may help with your application.
+If you are trading in a vehicle, please bring the title or payoff information if available.
+
+A member of our team may contact you before your appointment to confirm availability and answer any questions you may have.
+
+If you need to reschedule your appointment or speak with our staff before arriving, please contact us anytime at 424-672-0018.
+
+Thank you again, {name}, for choosing Addis Auto Sales.
+
+We look forward to welcoming you to our dealership and helping you drive away in a vehicle you’ll love.
+
+Warm regards,
+
+The Addis Auto Sales Team
+
+Addis Auto Sales
 904 N La Brea Ave, Inglewood, CA
-
-Phone:
 424-672-0018
-
-Thank you for choosing Addis Auto Sales.
 """
                 )
 
                 send_email(
                     ADMIN_EMAIL,
-                    "New Appointment Alert",
+                    "New Customer Appointment - Addis Auto Sales",
                     f"""
-New appointment submitted.
+A new customer appointment has been submitted through the Addis Auto Sales website.
 
-Customer: {name}
+Customer Information
+--------------------
+Name: {name}
 Phone: {phone}
 Email: {email}
+
+Appointment Details
+-------------------
 Vehicle: {vehicle_name}
 Date: {date}
 Time: {time}
 Reason: {reason}
+
+Recommended Follow-Up
+---------------------
+Please contact the customer to confirm availability, prepare the vehicle, and answer any questions before arrival.
+
+Dealership:
+Addis Auto Sales
+904 N La Brea Ave, Inglewood, CA
+424-672-0018
 """
                 )
 
@@ -1525,9 +1572,9 @@ Reason: {reason}
                 )
 
                 st.session_state["confirmation_data"] = {
-                    "title": "Appointment Booked",
-                    "subtitle": "Your appointment was scheduled successfully.",
-                    "message": "Addis Auto Sales will contact you to confirm your visit.",
+                    "title": "Appointment Request Received",
+                    "subtitle": "Thank you for choosing Addis Auto Sales.",
+                    "message": "Your appointment request has been received. Our team will prepare your vehicle information and may contact you to confirm your visit. Location: 904 N La Brea Ave, Inglewood, CA. Phone: 424-672-0018.",
                     "name": name,
                     "vehicle": vehicle_name,
                     "date": str(date),
