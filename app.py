@@ -7,7 +7,7 @@ import json
 import hashlib
 import smtplib
 from email.message import EmailMessage
-from datetime import datetime
+from datetime import datetime, date as dt_date
 from uuid import uuid4
 
 # =====================================================
@@ -1541,7 +1541,7 @@ Your appointment request will be submitted instantly.
 Selected Arrival Time:
 {time}
 
-Request Submitted:
+Request Selected Arrival Time:
 {appointment_submitted_at}
 """
         )
@@ -1580,7 +1580,7 @@ Appointment Details
 -------------------
 Vehicle: {vehicle_name}
 Date: {date}
-Submitted: {appointment_end_time}
+Selected Arrival Time: {time}
 Reason for Visit: {reason}
 
 Dealership Location
@@ -1635,7 +1635,7 @@ Appointment Details
 -------------------
 Vehicle: {vehicle_name}
 Date: {date}
-Submitted: {appointment_end_time}
+Selected Arrival Time: {time}
 Reason: {reason}
 
 Recommended Follow-Up
@@ -1654,7 +1654,7 @@ Addis Auto Sales
                     name,
                     phone,
                     vehicle_name,
-                    f"Date: {date} | Submitted: {appointment_end_time} | Reason: {reason}"
+                    f"Date: {date} | Selected Arrival Time: {time} | Reason: {reason}"
                 )
 
                 st.session_state["confirmation_data"] = {
