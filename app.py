@@ -1505,26 +1505,7 @@ elif page == "Appointment":
         phone = c2.text_input("Phone Number", placeholder="(555) 123-4567")
         email = c1.text_input("Email", placeholder="example@email.com")
         today = dt_date.today()
-        now_for_default = datetime.now()
-        last_slot_today = datetime.combine(today, datetime.strptime("06:00 PM", "%I:%M %p").time())
-
-        # If today is already closed, start customers on tomorrow automatically.
-        default_appointment_date = today if now_for_default < last_slot_today else today + timedelta(days=1)
-
-        date = c2.date_input(
-            "Appointment Date",
-            value=default_appointment_date,
-            min_value=today
-        )
-        st.markdown("""
-        <div class="appointment-card">
-            <h3>Choose Your Preferred Arrival Window</h3>
-            <p>
-                Select the date and time that works best for your visit. 
-                Same-day appointments automatically hide unavailable past times, so the schedule stays accurate and professional.
-            </p>
-        </div>
-        """, unsafe_allow_html=True)
+        now = datetime.now()
 
         all_times = [
             "09:00 AM",
@@ -1548,37 +1529,59 @@ elif page == "Appointment":
             "06:00 PM"
         ]
 
-        now = datetime.now()
-        today = dt_date.today()
-
-        if date == today:
-            available_times = []
+        def get_available_times(selected_date):
+            valid_slots = []
             for slot in all_times:
                 slot_time = datetime.strptime(slot, "%I:%M %p").time()
-                slot_datetime = datetime.combine(today, slot_time)
+                slot_datetime = datetime.combine(selected_date, slot_time)
 
+                # Never allow past time slots. For today, only future slots show.
                 if slot_datetime > now:
-                    available_times.append(slot)
+                    valid_slots.append(slot)
 
-            if not available_times:
-                st.markdown("""
-                <div class="appointment-summary">
-                    <div class="appointment-summary-title">Today Is Fully Booked</div>
-                    <div class="appointment-summary-main">Please choose another date</div>
-                    <div class="appointment-summary-sub">
-                        All remaining appointment windows for today have passed. Select tomorrow or another future date to continue.
-                    </div>
-                </div>
-                """, unsafe_allow_html=True)
-                time = "No available time today"
-            else:
-                time = st.selectbox("Preferred arrival time", available_times)
+            return valid_slots
+
+        # If today has no available future slots, start the customer on tomorrow automatically.
+        if get_available_times(today):
+            default_appointment_date = today
         else:
-            time = st.selectbox("Preferred arrival time", all_times)
+            default_appointment_date = today + timedelta(days=1)
+
+        date = c2.date_input(
+            "Appointment Date",
+            value=default_appointment_date,
+            min_value=today
+        )
+
+        st.markdown("""
+        <div class="appointment-card">
+            <h3>Choose Your Preferred Arrival Window</h3>
+            <p>
+                Select the date and time that works best for your visit. 
+                Past hours are automatically removed, so customers can only choose valid appointment times.
+            </p>
+        </div>
+        """, unsafe_allow_html=True)
+
+        available_times = get_available_times(date)
+
+        if not available_times:
+            st.markdown("""
+            <div class="appointment-summary">
+                <div class="appointment-summary-title">No Times Available</div>
+                <div class="appointment-summary-main">Please choose another date</div>
+                <div class="appointment-summary-sub">
+                    All appointment windows for the selected date have passed or are unavailable.
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+            time = "No available time"
+        else:
+            time = st.selectbox("Preferred arrival time", available_times)
 
         appointment_submitted_at = datetime.now().strftime("%B %d, %Y at %I:%M %p")
 
-        if time != "No available time today":
+        if time != "No available time":
             st.markdown(f"""
             <div class="appointment-summary">
                 <div class="appointment-summary-title">Appointment Preview</div>
@@ -1589,7 +1592,7 @@ elif page == "Appointment":
             </div>
             """, unsafe_allow_html=True)
 
-        if time != "No available time today":
+        if time != "No available time":
             reason = st.text_area(
                 "Reason for visit",
                 value="Vehicle Appointment",
@@ -1603,8 +1606,8 @@ elif page == "Appointment":
         if submit:
             vehicle_name = selected["name"] if selected else "General Appointment"
             vehicle_price = f"${selected['price']:,.0f}" if selected else "Not Selected"
-            if time == "No available time today":
-                st.error("Please choose another date because there are no appointment times available for the selected date.")
+            if time == "No available time":
+                st.error("Please choose another date because all available appointment hours for this date have passed.")
             elif not name or not phone:
                 st.error("Please enter your name and phone number.")
             else:
