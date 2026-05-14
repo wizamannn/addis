@@ -1557,15 +1557,38 @@ elif page == "Appointment":
         ]
 
         def get_booked_times(selected_date):
-            booked_df = query_db(
+
+            # =========================================
+            # NORMAL APPOINTMENTS
+            # =========================================
+            appointment_df = query_db(
                 "SELECT time FROM appointments WHERE date = ?",
                 (str(selected_date),)
             )
 
-            if booked_df.empty:
-                return set()
+            # =========================================
+            # FINANCE APPOINTMENTS
+            # =========================================
+            finance_df = query_db(
+                "SELECT appointment_time FROM finance_applications WHERE appointment_date = ?",
+                (str(selected_date),)
+            )
 
-            return set(booked_df["time"].dropna().astype(str).tolist())
+            booked_times = set()
+
+            # Add booked normal appointment times
+            if not appointment_df.empty:
+                booked_times.update(
+                    appointment_df["time"].dropna().astype(str).tolist()
+                )
+
+            # Add booked finance appointment times
+            if not finance_df.empty:
+                booked_times.update(
+                    finance_df["appointment_time"].dropna().astype(str).tolist()
+                )
+
+            return booked_times
 
         def get_available_times(selected_date):
             booked_times = get_booked_times(selected_date)
@@ -1598,7 +1621,9 @@ elif page == "Appointment":
             <h3>Choose Your Preferred Arrival Window</h3>
             <p>
                 Select the date and time that works best for your visit. 
-                Past hours and already-booked appointment times are automatically removed.
+                Past hours and unavailable appointment windows are automatically removed in real time.
+                If a finance consultation or dealership appointment has already reserved a time slot,
+                customers will no longer see that time as available.
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -1612,7 +1637,8 @@ elif page == "Appointment":
                 <div class="appointment-summary-title">No Times Available</div>
                 <div class="appointment-summary-main">Please choose another date</div>
                 <div class="appointment-summary-sub">
-                    All appointment windows for the selected date have either passed or are already booked.
+                    All appointment windows for the selected date are either fully booked,
+                    reserved by another customer, or no longer available for today.
                 </div>
             </div>
             """, unsafe_allow_html=True)
