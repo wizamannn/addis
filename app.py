@@ -1514,11 +1514,38 @@ Loan Term: {loan_term}
 # APPOINTMENT / ONE-TIME PAYMENT
 # =====================================================
 elif page == "Appointment":
-    st.markdown('<div class="section-title">Schedule Appointment</div>', unsafe_allow_html=True)
     selected = st.session_state.get("selected_vehicle")
 
+    st.markdown("""
+    <div class="process-shell">
+        <div class="process-header">
+            <div class="process-icon">📅</div>
+            <div>
+                <h1 class="process-title">Schedule Your Appointment</h1>
+                <p class="process-subtitle">
+                    Choose your visit date and preferred arrival window. This page is designed to match the finance application experience with a clean, professional dealership flow.
+                </p>
+            </div>
+        </div>
+    </div>
+    """, unsafe_allow_html=True)
+
     if selected:
-        st.markdown(f'<div class="glass"><h2>Selected Vehicle</h2><h3>{selected["name"]}</h3><h3 style="color:#ff2b2b;">${selected["price"]:,.0f}</h3></div>', unsafe_allow_html=True)
+        st.markdown(f"""
+        <div class="selected-vehicle-panel">
+            <div class="label">Selected Vehicle</div>
+            <div class="vehicle-name">{selected["name"]}</div>
+            <div class="vehicle-price">${selected["price"]:,.0f}</div>
+        </div>
+        """, unsafe_allow_html=True)
+    else:
+        st.markdown("""
+        <div class="selected-vehicle-panel">
+            <div class="label">Appointment Type</div>
+            <div class="vehicle-name">General Dealership Visit</div>
+            <div class="vehicle-price">Addis Auto Sales</div>
+        </div>
+        """, unsafe_allow_html=True)
 
     show_premium_banner(
         "Schedule Your Visit",
@@ -1527,6 +1554,20 @@ elif page == "Appointment":
     )
 
     with st.form("appointment_form"):
+        st.markdown("""
+        <div class="process-shell">
+            <div class="process-header">
+                <div class="process-icon">📝</div>
+                <div>
+                    <h2 class="process-title">Appointment Information</h2>
+                    <p class="process-subtitle">
+                        Please provide your contact details and select a valid appointment window. Already-booked finance or dealership appointments are automatically removed.
+                    </p>
+                </div>
+            </div>
+        </div>
+        """, unsafe_allow_html=True)
+
         c1, c2 = st.columns(2)
         name = c1.text_input("Full Name", placeholder="Enter your full name")
         phone = c2.text_input("Phone Number", placeholder="(555) 123-4567")
@@ -1620,10 +1661,7 @@ elif page == "Appointment":
         <div class="appointment-card">
             <h3>Choose Your Preferred Arrival Window</h3>
             <p>
-                Select the date and time that works best for your visit. 
-                Past hours and unavailable appointment windows are automatically removed in real time.
-                If a finance consultation or dealership appointment has already reserved a time slot,
-                customers will no longer see that time as available.
+                Select the date and time that works best for your visit. Past hours, finance consultations, and already-booked dealership appointments are automatically removed so you only see valid openings.
             </p>
         </div>
         """, unsafe_allow_html=True)
@@ -1674,10 +1712,16 @@ elif page == "Appointment":
 
         if time != "No available time":
             reason = st.text_area(
-                "Reason for visit",
+                "Tell us about your visit",
                 value="Vehicle Appointment",
-                placeholder="Example: I want to test drive this vehicle and discuss purchase options."
+                placeholder="Example: I want to test drive this vehicle, discuss pricing, and complete my purchase options."
             )
+            st.markdown("""
+            <div class="form-note">
+                After submitting, you will receive a confirmation email. If you do not see it in your inbox, please check your spam or junk folder.
+            </div>
+            """, unsafe_allow_html=True)
+
             submit = st.form_submit_button("Book Appointment")
         else:
             reason = "No available appointment time selected"
