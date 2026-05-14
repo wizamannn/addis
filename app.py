@@ -1684,31 +1684,9 @@ elif page == "Appointment":
         else:
             time = st.selectbox("Preferred arrival time", available_times)
 
-        if time != "No available time":
-            st.markdown(f"""
-            <div class="appointment-summary">
-                <div class="appointment-summary-title">Appointment Preview</div>
-                <div class="appointment-summary-main">{date} at {time}</div>
-                <div class="appointment-summary-sub">
-                    Addis Auto Sales will review your request and contact you to confirm your visit.
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
-
         appointment_submitted_at = datetime.now().strftime("%B %d, %Y at %I:%M %p")
 
         appointment_submitted_at = datetime.now().strftime("%B %d, %Y at %I:%M %p")
-
-        if time != "No available time":
-            st.markdown(f"""
-            <div class="appointment-summary">
-                <div class="appointment-summary-title">Appointment Preview</div>
-                <div class="appointment-summary-main">{date} at {time}</div>
-                <div class="appointment-summary-sub">
-                    Addis Auto Sales will review your request and contact you to confirm your visit.
-                </div>
-            </div>
-            """, unsafe_allow_html=True)
 
         if time != "No available time":
             reason = st.text_area(
