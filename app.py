@@ -1425,22 +1425,49 @@ elif page == "Finance":
 
                 send_email(
                     email,
-                    "Addis Auto Sales Finance Application Received",
+                    "Your Finance Application Has Been Received – Addis Auto Sales",
                     f"""
-Hi {full_name},
+Dear {full_name},
 
-Your finance application was received successfully.
+Thank you for submitting your finance application with Addis Auto Sales.
 
-Vehicle:
+We are pleased to confirm that your application has been successfully received and is currently being reviewed by our finance team. We appreciate the opportunity to assist you with your next vehicle purchase.
+
+Application Summary
+-------------------------
+Vehicle Interest:
 {vehicle_name}
 
 Preferred Appointment:
-{appointment_date} at {appointment_time}
+{appointment_date} at {time}
 
-Addis Auto Sales will contact you shortly.
+Customer Information:
+Name: {full_name}
+Phone: {phone}
+Email: {email}
 
-904 N La Brea Ave, Inglewood, CA
-424-672-0018
+What Happens Next
+-------------------------
+A member of our finance department will review your application details and contact you shortly regarding the next steps, financing options, and vehicle availability.
+
+Please note that submitting an application does not guarantee approval. Final approval is based on lender review, verification of information, and vehicle eligibility.
+
+Dealership Information
+-------------------------
+Addis Auto Sales
+904 N La Brea Ave
+Inglewood, CA
+
+Phone: 424-672-0018
+Email: autosalesaddis@gmail.com
+
+Thank you again for choosing Addis Auto Sales.
+
+We look forward to assisting you and helping you find the right vehicle for your needs.
+
+Warm regards,
+
+Addis Auto Sales Finance Department
 """
                 )
 
