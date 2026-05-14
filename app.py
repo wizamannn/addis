@@ -1439,7 +1439,7 @@ Vehicle Interest:
 {vehicle_name}
 
 Preferred Appointment:
-{appointment_date} at {time}
+{appointment_date} at {appointment_time}
 
 Customer Information:
 Name: {full_name}
@@ -1556,19 +1556,32 @@ elif page == "Appointment":
             "06:00 PM"
         ]
 
+        def get_booked_times(selected_date):
+            booked_df = query_db(
+                "SELECT time FROM appointments WHERE date = ?",
+                (str(selected_date),)
+            )
+
+            if booked_df.empty:
+                return set()
+
+            return set(booked_df["time"].dropna().astype(str).tolist())
+
         def get_available_times(selected_date):
+            booked_times = get_booked_times(selected_date)
             valid_slots = []
+
             for slot in all_times:
                 slot_time = datetime.strptime(slot, "%I:%M %p").time()
                 slot_datetime = datetime.combine(selected_date, slot_time)
 
-                # Never allow past time slots. For today, only future slots show.
-                if slot_datetime > now:
+                # Block past hours and already-booked slots.
+                if slot_datetime > now and slot not in booked_times:
                     valid_slots.append(slot)
 
             return valid_slots
 
-        # If today has no available future slots, start the customer on tomorrow automatically.
+        # If today has no future available slots, start on tomorrow automatically.
         if get_available_times(today):
             default_appointment_date = today
         else:
@@ -1585,11 +1598,12 @@ elif page == "Appointment":
             <h3>Choose Your Preferred Arrival Window</h3>
             <p>
                 Select the date and time that works best for your visit. 
-                Past hours are automatically removed, so customers can only choose valid appointment times.
+                Past hours and already-booked appointment times are automatically removed.
             </p>
         </div>
         """, unsafe_allow_html=True)
 
+        booked_times = get_booked_times(date)
         available_times = get_available_times(date)
 
         if not available_times:
@@ -1598,13 +1612,26 @@ elif page == "Appointment":
                 <div class="appointment-summary-title">No Times Available</div>
                 <div class="appointment-summary-main">Please choose another date</div>
                 <div class="appointment-summary-sub">
-                    All appointment windows for the selected date have passed or are unavailable.
+                    All appointment windows for the selected date have either passed or are already booked.
                 </div>
             </div>
             """, unsafe_allow_html=True)
             time = "No available time"
         else:
             time = st.selectbox("Preferred arrival time", available_times)
+
+        if time != "No available time":
+            st.markdown(f"""
+            <div class="appointment-summary">
+                <div class="appointment-summary-title">Appointment Preview</div>
+                <div class="appointment-summary-main">{date} at {time}</div>
+                <div class="appointment-summary-sub">
+                    Addis Auto Sales will review your request and contact you to confirm your visit.
+                </div>
+            </div>
+            """, unsafe_allow_html=True)
+
+        appointment_submitted_at = datetime.now().strftime("%B %d, %Y at %I:%M %p")
 
         appointment_submitted_at = datetime.now().strftime("%B %d, %Y at %I:%M %p")
 
@@ -1692,6 +1719,10 @@ If you need to reschedule your appointment or speak with our staff before arrivi
 Thank you again, {name}, for choosing Addis Auto Sales.
 
 We look forward to welcoming you to our dealership and helping you drive away in a vehicle you’ll love.
+
+Confirmation Email Notice
+-------------------------
+You should receive this appointment confirmation by email. If you do not see it in your inbox, please check your spam or junk folder.
 
 Warm regards,
 
